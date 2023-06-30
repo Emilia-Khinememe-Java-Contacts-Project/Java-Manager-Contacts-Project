@@ -125,7 +125,7 @@ public class ContactApplication {
                 found = true;
                 break;
             }
-            if(!found){
+            else {
                 System.out.println("Contact not found!");
             }
         }
