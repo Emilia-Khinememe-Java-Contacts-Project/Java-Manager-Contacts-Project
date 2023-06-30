@@ -4,11 +4,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.io.*;
-import java.util.Scanner;
 
 
 public class ContactApplication {
@@ -18,16 +15,18 @@ public class ContactApplication {
         loadContacts();
         runningContact();
     }
-    public static void loadContacts() {
+    private static void loadContacts() {
         try {
             if (Files.exists(CONTACTS_FILE)) {
                 List<String> lines = Files.readAllLines(CONTACTS_FILE);
                 for (String line : lines) {
                     String[] parts = line.split("\\|");
-                    String name = parts[0].trim();
-                    String phoneNumber = parts[0].trim();
-                    Contact contact = new Contact(name, phoneNumber);
-                    contacts.add(contact);
+                    if (parts.length >= 2) {
+                        String name = parts[0].trim();
+                        String phoneNumber = parts[1].trim();
+                        Contact contact = new Contact(name, phoneNumber);
+                        contacts.add(contact);
+                    }
                 }
             } else {
                 // Add pre-defined contacts here
@@ -37,28 +36,50 @@ public class ContactApplication {
                 Contact contact4 = new Contact("Mata", "923456710");
                 contacts.add(contact1);
                 contacts.add(contact2);
+                contacts.add(contact3);
+                contacts.add(contact4);
             }
         } catch (IOException e) {
             System.out.println("An error occurred while loading contacts.");
             e.printStackTrace();
         }
+    }
 
+
+    public static void saveContact() {
+        try {
+            List<String> lines = new ArrayList<>();
+            for (Contact contact : contacts) {
+                String line = contact.getName() + " | " + contact.getPhoneNumber();
+                lines.add(line);
+            }
+            Files.write(CONTACTS_FILE, lines, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+        } catch (IOException e) {
+            System.out.println("An error occurred while saving contacts.");
+            e.printStackTrace();
+        }
+        System.out.println(contacts);
     }
     public static void runningContact() {
         Scanner scanner = new Scanner(System.in);
-        int choice = scanner.nextInt();
+
+        int choice;
         do {
             options();
+            choice = getChoice(scanner);
             switch (choice) {
-                case 1: view();
+                case 1:
+                    view();
                     break;
                 case 2:
+                    add(scanner);
                       break;
                 case 3:
+                    search(scanner);
                     break;
 
                 case 4:
-
+                    delete(scanner);
                     break;
                 case 5:
                     exit();
@@ -66,6 +87,11 @@ public class ContactApplication {
             }
         } while (choice != 5);
 
+    }
+    public static int getChoice(Scanner scanner){
+        int choice = scanner.nextInt();
+        scanner.nextLine();
+        return choice;
     }
     private static void exit() {
         System.out.println("Exiting the application. Goodbye!");
@@ -76,7 +102,51 @@ public class ContactApplication {
         System.out.println("Name            | Phone number");
         System.out.println("----------------|--------------");
         for (Contact contact : contacts) {
-            System.out.printf( contact.getName(), contact.getPhoneNumber());
+            System.out.printf("%-16s | %s%n", contact.getName(), contact.getPhoneNumber());
+        }
+    }
+    public static void add(Scanner scanner){
+        System.out.print("Enter the name : ");
+        String name = scanner.nextLine();
+        System.out.print("Enter the number : ");
+        String phoneNumber = scanner.nextLine();
+        Contact contact = new Contact(name, phoneNumber);
+        contacts.add(contact);
+        System.out.println("Contact added!");
+    }
+    public static void search(Scanner scanner){
+        System.out.print("Enter the name to search : ");
+        String name = scanner.nextLine();
+        boolean found = false;
+        for(Contact contact : contacts){
+            if (contact.getName().equalsIgnoreCase((name))) {
+                System.out.println("Contact Found:");
+                System.out.println(contact);
+                found = true;
+                break;
+            }
+            if(!found){
+                System.out.println("Contact not found!");
+            }
+        }
+    }
+    public static void delete(Scanner scanner){
+        System.out.print("Enter the name to delete : ");
+        String name = scanner.nextLine();
+        boolean deleted = false;
+        Iterator<Contact> iterator= contacts.iterator();
+        while(iterator.hasNext()){
+            Contact contact = iterator.next();
+            if(contact.getName().equalsIgnoreCase(name)){
+                iterator.remove();
+                deleted = true;
+                break;
+            }
+        }
+        if(deleted){
+            System.out.println("Contact deleted!");
+        }else{
+            System.out.println("Contact not found!");
         }
     }
 
@@ -89,37 +159,7 @@ public class ContactApplication {
         System.out.println("5. Exit.");
         System.out.print("Enter an option (1, 2, 3, 4, or 5): ");
     }
+
 }
 
-
-
-
-//        for (int i = 0; i <  ContactName.size(); i += 1) {
-//            for (int j = 0; j <  ContactNum.size(); j += 1)
-//                System.out.println(ContactName.get(i) + ": " +  ContactNum.get(j));
-//        }
-//
-//        Files.write(
-//                Paths.get("data", "contacts.txt"),
-//                Arrays.asList("John"), // list with one item
-//                StandardOpenOption.APPEND
-//        );
-//
-//        List<String> lines = Files.readAllLines(Paths.get("data", "contacts.txt"));
-//        List<String> newList = new ArrayList<>();
-//
-//        for (String line : lines) {
-//            if (line.equals("Khinememe")) {
-//                newList.add("Johnny");
-//                continue;
-//            }
-//            newList.add(line);
-//        }
-//
-//        Files.write(Paths.get("data", "contacts.txt"), newList);
-//
-//
-
-//    }
-//}
 
