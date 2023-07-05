@@ -13,6 +13,7 @@ public class ContactApplication {
     private static final Path CONTACTS_FILE = Paths.get("data", "contacts.txt");
     public static void main(String[] args) {
         loadContacts();
+        saveContact();
         runningContact();
     }
     private static void loadContacts() {
@@ -24,7 +25,8 @@ public class ContactApplication {
                     if (parts.length >= 2) {
                         String name = parts[0].trim();
                         String phoneNumber = parts[1].trim();
-                        Contact contact = new Contact(name, phoneNumber);
+                        String formattedPhoneNumber = formatPhoneNumber(phoneNumber);
+                        Contact contact = new Contact(name, formattedPhoneNumber);
                         contacts.add(contact);
                     }
                 }
@@ -43,6 +45,18 @@ public class ContactApplication {
             System.out.println("An error occurred while loading contacts.");
             e.printStackTrace();
         }
+    }
+
+    public static String formatPhoneNumber(String phoneNumber) {
+        StringBuilder sb = new StringBuilder(phoneNumber);
+
+        // Insert dash at the third index
+        sb.insert(3, "-");
+        sb.insert(7, "-");
+
+        // We now have a formatted phone number
+        String formattedPhoneNumber = sb.toString();
+        return formattedPhoneNumber;
     }
 
 
@@ -109,10 +123,11 @@ public class ContactApplication {
         System.out.print("Enter the name : ");
         String name = scanner.nextLine();
         System.out.print("Enter the number : ");
-        String phoneNumber = scanner.nextLine();
+        String phoneNumber =  formatPhoneNumber(scanner.nextLine());
         Contact contact = new Contact(name, phoneNumber);
         contacts.add(contact);
         System.out.println("Contact added!");
+        saveContact();
     }
     public static void search(Scanner scanner){
         System.out.print("Enter the name to search : ");
@@ -145,6 +160,7 @@ public class ContactApplication {
         }
         if(deleted){
             System.out.println("Contact deleted!");
+            saveContact();
         }else{
             System.out.println("Contact not found!");
         }
