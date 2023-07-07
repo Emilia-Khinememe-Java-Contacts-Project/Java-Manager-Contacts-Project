@@ -44,20 +44,27 @@ public class ContactApplication {
             e.printStackTrace();
         }
     }
-// Bonus part formatting the phone number
+    // Bonus part formatting the phone number
     public static String formatPhoneNumber(String phoneNumber) {
-        StringBuilder sb = new StringBuilder(phoneNumber);
+        StringBuilder sb = new StringBuilder();
 
-        // Insert dash at the third index
-        sb.insert(3, "-");
-        sb.insert(7, "-");
+        int digitCount = 0;
+        for (char c : phoneNumber.toCharArray()) {
+            if (Character.isDigit(c)) {
+                sb.append(c);
+                digitCount++;
 
-        // We now have a formatted phone number
-        String formattedPhoneNumber = sb.toString();
-        return formattedPhoneNumber;
+                if (digitCount == 3 || digitCount == 6) {
+                    sb.append("-");
+                }
+            }
+        }
+
+        return sb.toString();
     }
 
-// saving the changes for both add and delete contact methods
+
+    // saving the changes for both add and delete contact methods
     public static void saveContact() {
         try {
             List<String> lines = new ArrayList<>();
@@ -72,7 +79,7 @@ public class ContactApplication {
         }
         System.out.println(contacts);
     }
-//    Method for User Options
+    //    Method for User Options
     public static void options() {
         System.out.println("\nMain Menu:");
         System.out.println("1. View contacts.");
@@ -82,13 +89,13 @@ public class ContactApplication {
         System.out.println("5. Exit.");
         System.out.print("Enter an option (1, 2, 3, 4, or 5): ");
     }
-//    Collection user input
+    //    Collection user input
     public static int getChoice(Scanner scanner){
         int choice = scanner.nextInt();
         scanner.nextLine();
         return choice;
     }
-//    Methods for collection user input and run different methods based on input
+    //    Methods for collection user input and run different methods based on input
     public static void runningContact() {
         Scanner scanner = new Scanner(System.in);
 
@@ -102,7 +109,7 @@ public class ContactApplication {
                     break;
                 case 2:
                     add(scanner);
-                      break;
+                    break;
                 case 3:
                     search(scanner);
                     break;
@@ -118,7 +125,7 @@ public class ContactApplication {
 
     }
 
-// Option-1 viewing all the contacts from txt file
+    // Option-1 viewing all the contacts from txt file
     public static void view() {
         System.out.println("\nContacts:");
         System.out.println("Name            | Phone number");
@@ -127,7 +134,7 @@ public class ContactApplication {
             System.out.printf("%-16s | %s%n", contact.getName(), contact.getPhoneNumber());
         }
     }
-//    Option-2 adding the contact name and number
+    //    Option-2 adding the contact name and number
     public static void add(Scanner scanner){
         System.out.print("Enter the name : ");
         String name = scanner.nextLine();
@@ -138,7 +145,7 @@ public class ContactApplication {
         System.out.println("Contact added!");
         saveContact();
     }
-//    Option-3 searching the contact by name
+    //    Option-3 searching the contact by name
     public static void search(Scanner scanner){
         System.out.print("Enter the name to search : ");
         String name = scanner.nextLine();
@@ -155,7 +162,7 @@ public class ContactApplication {
             }
         }
     }
-//    Option-4 deleting the contact by name
+    //    Option-4 deleting the contact by name
     public static void delete(Scanner scanner){
         System.out.print("Enter the name to delete : ");
         String name = scanner.nextLine();
@@ -176,12 +183,10 @@ public class ContactApplication {
             System.out.println("Contact not found!");
         }
     }
-//    Option 5- exiting the application
+    //    Option 5- exiting the application
     private static void exit() {
         System.out.println("Exiting the application. Goodbye!");
     }
 
 
 }
-
-
